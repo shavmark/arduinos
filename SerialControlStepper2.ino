@@ -47,7 +47,7 @@
  */
 
 
-class State
+class XYArm
 {    
   public:
     enum {SetPin, MoveTo, Move, Run, RunSpeed, SetMaxSpeed, SetAcceleration, SetSpeed, SetCurrentPosition, RunToPosition, RunSpeedToPosition, DisableOutputs, EnableOutputs, GetDistanceToGo, GetTargetPositon, GetCurrentPosition, } Commands;
@@ -55,7 +55,7 @@ class State
     
     void begin(int baud, MeStepper& stepper1, MeStepper& stepper2);
     
-    int Read();         // must be called regularly to clean out Serial buffer
+    int read(MeStepper& stepper1, MeStepper& stepper2);         // must be called regularly to clean out Serial buffer
           
   private:
     unsigned char cmd;
@@ -66,13 +66,13 @@ class State
     int index;              // -1 = waiting for new packet
 };
 
-State state;
+XYArm xy;
 MeStepper stepper1(PORT_1);
 MeStepper stepper2(PORT_2);
 
 void setup()
 {  
-  state.begin(9600, stepper1, stepper2);
+  xy.begin(9600, stepper1, stepper2);
 }
 
 void loop()
@@ -120,7 +120,7 @@ void loop()
       }
 }
 
- void State::begin(int baud, MeStepper& stepper1, MeStepper& stepper2){
+ void XYArm::begin(int baud, MeStepper& stepper1, MeStepper& stepper2){
       status = 0; 
       index = -1;
       // Change these to suit your stepper if you want
@@ -131,7 +131,7 @@ void loop()
       Serial.begin(baud);
     }
 
-int State::Read(){
+int XYArm::read(MeStepper& stepper1, MeStepper& stepper2){
 
    while(Serial.available() > 0){
 
